@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jack's Trade — Early Access Booking</title>
+
+  <!-- PWA / App Meta Tags -->
+  <meta name="theme-color" content="#0b1120" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Jack's Trade" />
+  <link id="apple-touch-icon" rel="apple-touch-icon" />
+  <link id="pwa-manifest" rel="manifest" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: #0b1120;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      max-width: 400px;
+      width: 100%;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 1;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(234, 179, 8, 0.15);
+      color: #facc15;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 26px; margin-bottom: 10px; color: #ffffff; }
+    p.desc { font-size: 15px; color: #94a3b8; line-height: 1.5; margin-bottom: 24px; }
+    .merchant-box {
+      background: #0f172a;
+      border: 1px dashed #facc15;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    .merchant-label { font-size: 12px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+    .merchant-code-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 2px;
+    }
+    .merchant-code { font-size: 24px; font-weight: 800; color: #facc15; letter-spacing: 1px; }
+    .copy-btn {
+      background: rgba(250, 204, 21, 0.15);
+      color: #facc15;
+      border: 1px solid rgba(250, 204, 21, 0.4);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .merchant-name {
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+    .merchant-name strong { color: #facc15; font-weight: 700; letter-spacing: 0.5px; }
+    .fee { font-size: 14px; color: #e2e8f0; margin-top: 6px; font-weight: 600; }
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      margin-bottom: 12px;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-book { background: #facc15; color: #0f172a; }
+    .btn-confirm { background: #22c55e; color: #ffffff; }
+    .btn-install {
+      background: #0f172a;
+      color: #facc15;
+      border: 1px solid #facc15;
+      display: none; /* Shown automatically when installable */
+    }
+    .note { font-size: 12px; color: #94a3b8; margin-top: 12px; line-height: 1.5; }
+    .note strong { color: #facc15; }
+
+    /* iOS / Manual Install Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+    }
+    .modal {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 340px;
+      width: 100%;
+      text-align: left;
+    }
+    .modal h3 { color: #fff; font-size: 18px; margin-bottom: 10px; }
+    .modal p { color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
+    .modal button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #facc15;
+      color: #0f172a;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <span class="badge">Upcoming Launch</span>
+    <h1>Jack's Trade</h1>
+    <p class="desc">Reserve your early-access spot for the upcoming Jack's Trade app before public release.</p>
+
+    <div class="merchant-box">
+      <div class="merchant-label">MTN MoMo Merchant Code</div>
+      <div class="merchant-code-row">
+        <div class="merchant-code" id="merchantCode">94427636</div>
+        <button type="button" class="copy-btn" onclick="navigator.clipboard.writeText('94427636'); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy', 1800);">Copy</button>
+      </div>
+      <div class="merchant-name">Merchant Name: <strong>MOURINE</strong></div>
+      <div class="fee">Booking Fee: 5,000 UGX</div>
+    </div>
+
+    <a href="tel:*165*3%23" class="btn btn-book">
+      <span>📅</span> Book Upcoming Jack's Trade
+    </a>
+
+    <a href="https://wa.me/256758748743?text=Hello%2C%20I%20have%20paid%20the%205%2C000%20UGX%20booking%20fee%20for%20Jack%27s%20Trade%20(Merchant%20Code%3A%2094427636%20-%20MOURINE).%20Here%20is%20my%20payment%20confirmation%3A" class="btn btn-confirm" target="_blank" rel="noopener noreferrer">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.458 3.475 1.328 4.988L2 22l5.188-1.359a9.927 9.927 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.453 9.969-9.969 0-2.663-1.037-5.166-2.92-7.05A9.903 9.903 0 0 0 12.031 2zm5.82 14.262c-.244.688-1.418 1.316-1.976 1.399-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.68-.622-2.957-1.277-4.888-4.254-5.036-4.451-.147-.197-1.202-1.599-1.202-3.05 0-1.451.76-2.164 1.03-2.459.27-.295.59-.369.786-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.59.835 2.037.909 2.185.074.147.123.319.025.516-.098.197-.147.319-.295.491-.147.172-.31.384-.442.516-.147.147-.301.307-.129.602.172.295.764 1.26 1.64 2.041 1.127 1.005 2.077 1.316 2.372 1.464.295.147.467.123.639-.074.172-.197.737-.86.934-1.155.197-.295.393-.246.663-.147.27.098 1.72.811 2.015.959.295.147.491.221.565.344.074.123.074.713-.17 1.401z"/>
+      </svg>
+      <span>Confirm Payment on WhatsApp</span>
+    </a>
+
+    <!-- Native App Install Button -->
+    <button type="button" id="installAppBtn" class="btn btn-install">
+      <span>📲</span> Download App
+    </button>
+
+    <p class="note">Tap "Book" to dial *165*3#, enter Merchant Code <strong>94427636</strong> (verify name: <strong>MOURINE</strong>), then tap Confirm on WhatsApp.</p>
+  </div>
+
+  <!-- iOS Install Instructions Modal -->
+  <div class="modal-backdrop" id="iosModal">
+    <div class="modal">
+      <h3>Download Jack's Trade App</h3>
+      <p>To install this app on your iPhone/iPad:<br><br>
+        1. Tap the <strong>Share</strong> icon at the bottom of Safari.<br>
+        2. Scroll down and tap <strong>Add to Home Screen</strong>.<br>
+        3. Tap <strong>Add</strong> in the top-right corner.
+      </p>
+      <button type="button" onclick="document.getElementById('iosModal').style.display='none'">Got it</button>
+    </div>
+  </div>
+
+  <script>
+    // 1. Generate a crisp 512x512 App Icon dynamically
+    function createAppIcon() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+
+      // Background
+      ctx.fillStyle = '#0b1120';
+      ctx.fillRect(0, 0, 512, 512);
+
+      // Gold border ring
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 24;
+      ctx.strokeRect(24, 24, 464, 464);
+
+      // "JT" Monogram
+      ctx.fillStyle = '#facc15';
+      ctx.font = 'bold 210px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('JT', 256, 270);
+
+      return canvas.toDataURL('image/png');
+    }
+
+    const iconDataUrl = createAppIcon();
+    document.getElementById('apple-touch-icon').href = iconDataUrl;
+
+    // 2. Attach Web App Manifest dynamically (Triggers "Install App" in Chrome/Edge/Android)
+    const manifest = {
+      name: "Jack's Trade",
+      short_name: "Jack's Trade",
+      description: "Early-access booking for the Jack's Trade app.",
+      start_url: window.location.href,
+      display: "standalone",
+      background_color: "#0b1120",
+      theme_color: "#0b1120",
+      icons: [
+        { src: iconDataUrl, sizes: "192x192", type: "image/png", purpose: "any maskable" },
+        { src: iconDataUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+      ]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    document.getElementById('pwa-manifest').href = URL.createObjectURL(manifestBlob);
+
+    // 3. Register an inline Service Worker (Required by browsers to allow true App Installation)
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        self.addEventListener('install', (e) => self.skipWaiting());
+        self.addEventListener('activate', (e) => self.clients.claim());
+        self.addEventListener('fetch', (e) => {});
+      `;
+      const swBlob = new Blob([swCode], { type: 'application/javascript' });
+      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+    }
+
+    // 4. Handle Native "Download App" Prompt
+    let deferredPrompt;
+    const installBtn = document.getElementById('installAppBtn');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (!isStandalone) {
+        installBtn.style.display = 'flex';
+      }
+    });
+
+    // Show button on iOS Safari if not already installed
+    if (isIOS && !isStandalone) {
+      installBtn.style.display = 'flex';
+    }
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.style.display = 'none';
+        }
+        deferredPrompt = null;
+      } else if (isIOS) {
+        document.getElementById('iosModal').style.display = 'flex';
+      }
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installBtn.style.display = 'none';
+      deferredPrompt = null;
+    });
+  </script>
+
+</body>
+</html>
